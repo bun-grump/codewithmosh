@@ -1,8 +1,34 @@
+const startupDebugger = require("debug")("app:startup");
+const dbDebugger = require("debug")("app:db");
+const config = require("config");
+const morgan = require("morgan");
+const helmet = require("helmet");
 const Joi = require("joi");
+const logger = require("./logger");
 const express = require("express");
 const app = express();
 
-app.use(express.json());
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`); // by default is "undefined"
+console.log(`app: ${app.get("env")}`); // by default is development
+
+app.use(express.json()); // to parse json
+app.use(express.urlencoded({ extended: true })); // to parse form data
+app.use(express.static("public")); // to serve static files
+app.use(logger);
+app.use(helmet());
+
+// Configuration
+console.log("Application Name: " + config.get("name"));
+console.log("Mail Server: " + config.get("mail.host"));
+console.log("Mail Password: " + config.get("mail.password")); // set the enviroment variable and store the mapping in custom-environment-variables.json
+
+if (app.get("env") === "development") {
+  app.use(morgan("tiny"));
+  startupDebugger("Morgan enabled...");
+}
+
+// Db work ...
+dbDebugger("Connected to the database...");
 
 const courses = [
   { id: 1, name: "course1" },

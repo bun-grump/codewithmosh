@@ -92,5 +92,24 @@ npm publsih
 # setting environment variables
 
 export PORT=5000 # mac
+export NODE_ENV=development
 set PORT=5000 # windows command prompt
 $env:PORT=5000 # windows powershell
+$env:NODE_ENV="development"
+$env:app_password=1234
+
+# configuration
+
+default.json
+development.json
+production.json
+
+custom-environment-variables.json # store the mapping here
+
+# Debugging
+
+$env:DEBUG="app:startup"
+$env:DEBUG="app:startup","app:db"
+$env:DEBUG="" # debug nothing
+$env:DEBUG="app:\*" # wildcard
+DEBUG=app:db nodemon index.js # only works for mac
