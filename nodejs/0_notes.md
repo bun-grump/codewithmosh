@@ -113,3 +113,16 @@ $env:DEBUG="app:startup","app:db"
 $env:DEBUG="" # debug nothing
 $env:DEBUG="app:\*" # wildcard
 DEBUG=app:db nodemon index.js # only works for mac
+
+# templating engines
+
+to return HMTL template to the client, use templating engines pug, mustache, ejs
+
+#database integration
+
+https://expressjs.com/en/guide/database-integration.html
+
+# structuring express applications
+
+create a folder called routes and put all the router inside (home, courses)
+create a folder called middleware and put all the middleware inside (logger)
