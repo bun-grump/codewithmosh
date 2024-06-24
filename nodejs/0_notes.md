@@ -118,7 +118,7 @@ DEBUG=app:db nodemon index.js # only works for mac
 
 to return HMTL template to the client, use templating engines pug, mustache, ejs
 
-#database integration
+# database integration
 
 https://expressjs.com/en/guide/database-integration.html
 
@@ -126,3 +126,7 @@ https://expressjs.com/en/guide/database-integration.html
 
 create a folder called routes and put all the router inside (home, courses)
 create a folder called middleware and put all the middleware inside (logger)
+
+# MongoDB
+
+mongoimport --db mongo-exercises --collection courses --drop --file exercise-data.json --jsonArray # import using command prompt
