@@ -6,11 +6,55 @@ mongoose
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
 const courseSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+    minlength: 5,
+    maxlength: 255,
+    // match: /pattern/
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ["web", "mobile", "network"],
+    lowercase: true, // convert to lowercase
+    trim: true, // remove leading and trailing whitespace
+  },
   author: String,
-  tags: [String],
+  // tags: {
+  //   type: Array,
+  //   validate: {
+  //     validator: function (v) {
+  //       return v && v.length > 0;
+  //     },
+  //     message: "A course should have at least one tag.",
+  //   },
+  // },
+  tags: {
+    type: Array,
+    validate: {
+      validator: function (v) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(v && v.length > 0);
+          }, 4000);
+        });
+      },
+      message: "A course should have at least one tag.",
+    },
+  },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
+  price: {
+    type: Number, // mongoose type
+    required: function () {
+      return this.isPublished;
+    }, // price is only required when published
+    min: 10,
+    max: 200,
+    get: (v) => Math.round(v), // round the value when getting it
+    set: (v) => Math.round(v), // round the value when setting it
+  },
 });
 
 const Course = mongoose.model("Course", courseSchema);
@@ -19,12 +63,18 @@ async function createCourse() {
   const course = new Course({
     name: "Angular Course",
     author: "Mosh",
-    tags: ["angular", "frontend"],
+    category: "Web",
+    tags: ["frontend"],
     isPublished: true,
+    price: 15.88,
   });
 
-  const result = await course.save();
-  console.log(result);
+  try {
+    const result = await course.save();
+    console.log(result);
+  } catch (ex) {
+    for (field in ex.errors) console.log(ex.errors[field].message);
+  }
 }
 
 async function getCourses() {
@@ -87,7 +137,7 @@ async function removeCourse(id) {
   console.log(result);
 }
 
-// createCourse();
+createCourse();
 
 // getCourses();
 
@@ -95,4 +145,4 @@ async function removeCourse(id) {
 
 // updateCourse2("6678696892acc7255cdf2bfd");
 
-removeCourse("6678696892acc7255cdf2bfd");
+// removeCourse("6678696892acc7255cdf2bfd");
