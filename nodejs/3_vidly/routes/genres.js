@@ -1,4 +1,4 @@
-const { Genre, validate } = require("../models/genres");
+const { Genre, validate } = require("../models/genre");
 const express = require("express");
 const router = express.Router();
 
@@ -19,8 +19,8 @@ router.post("/", async (req, res) => {
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
   else {
-    let genre = new Genre({ name: req.body.name });
-    genre = await genre.save();
+    const genre = new Genre({ name: req.body.name });
+    await genre.save();
     res.send(genre);
   }
 });

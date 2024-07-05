@@ -89,6 +89,14 @@ npm version minor
 npm version patch
 npm publsih
 
+# configuration
+
+default.json
+development.json
+production.json
+
+custom-environment-variables.json # store the mapping here
+
 # setting environment variables
 
 export PORT=5000 # mac
@@ -96,7 +104,6 @@ export NODE_ENV=development
 set PORT=5000 # windows command prompt
 $env:PORT=5000 # windows powershell
 $env:NODE_ENV="development"
-$env:app_password=1234
 
 # configuration
 
@@ -130,3 +137,33 @@ create a folder called middleware and put all the middleware inside (logger)
 # MongoDB
 
 mongoimport --db mongo-exercises --collection courses --drop --file exercise-data.json --jsonArray # import using command prompt
+
+# Transaction/Two phase commit
+
+fawn has been obsolete
+use mongoose transaction
+
+# Object ID
+
+\_id: 66872f2e4d41b955fad7b7c7 (24 characters, 12 bytes)
+first 4 bytes: timestamp
+next 3 bytes: machine identifier
+next 2 bytes: process identifier
+next 3 bytes: counter
+
+each 1 byte there are 8 bits(each bit either 0 or 1)
+2^8 = 256, so with 1 byte we can store 256 different numbers
+2^8^3 = 2^24 = 16M
+so with the same machine same process, we generate more than 16M documents
+then counter will overflow and generate same object ID, so very unlikely
+
+joi-objectid no longer works, use Joi.string().hex().length(24)
+
+# Lodash
+
+utilities functions
+pick # pick properties
+
+# password validation
+
+joi-password-complexity

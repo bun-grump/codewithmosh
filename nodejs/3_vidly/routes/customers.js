@@ -1,4 +1,4 @@
-const { Customer, validate } = require("../models/customers");
+const { Customer, validate } = require("../models/customer");
 const express = require("express");
 const router = express.Router();
 
@@ -19,12 +19,12 @@ router.post("/", async (req, res) => {
   if (result.error)
     return res.status(400).send(result.error.details[0].message);
   else {
-    let customer = new Customer({
+    const customer = new Customer({
       name: req.body.name,
       phone: req.body.phone,
       isGold: req.body.isGold,
     });
-    customer = await customer.save();
+    await customer.save();
     res.send(customer);
   }
 });
