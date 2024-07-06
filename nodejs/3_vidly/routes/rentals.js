@@ -1,3 +1,4 @@
+const auth = require("../middleware/auth");
 const { Rental, validate } = require("../models/rental");
 const { Customer } = require("../models/customer");
 const { Movie } = require("../models/movie");
@@ -17,7 +18,7 @@ router.get("/:id", async (req, res) => {
   else res.send(rental);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const result = validate(req.body);
   if (result.error)
     return res.status(400).send(result.error.details[0].message);

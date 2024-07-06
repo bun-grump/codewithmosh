@@ -5,6 +5,7 @@ const Joi = require("joi");
 const express = require("express");
 const router = express.Router();
 
+// authenticating users
 router.post("/", async (req, res) => {
   const result = validate(req.body);
   if (result.error)
@@ -13,7 +14,11 @@ router.post("/", async (req, res) => {
   if (!user) return res.status(400).send("Invalid email or password");
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send("Invalid email or password");
-  res.send(true);
+
+  // storing the private key using environment variables, never store in source code
+  const token = user.generateAuthToken();
+
+  res.send(token);
 });
 
 function validate(req) {

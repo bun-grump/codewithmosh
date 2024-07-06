@@ -91,11 +91,17 @@ npm publsih
 
 # configuration
 
+npm i config
+then create a folder called config
+then create the following three files
+
 default.json
 development.json
 production.json
 
 custom-environment-variables.json # store the mapping here
+
+then use confg.get("environment name")
 
 # setting environment variables
 
@@ -104,6 +110,9 @@ export NODE_ENV=development
 set PORT=5000 # windows command prompt
 $env:PORT=5000 # windows powershell
 $env:NODE_ENV="development"
+
+Get-ChildItem Env: # list of existing variables
+Remove-Item Env:\MYVAR # remove variable
 
 # configuration
 
@@ -167,3 +176,36 @@ pick # pick properties
 # password validation
 
 joi-password-complexity
+
+# hashing password
+
+npm i bcrypt
+
+# json web token
+
+npm i jsonwebtoken
+Never store private keys and other secrets in your codebase. Store them in environment variables. Use the config package to read application settings stored in environment variables.
+everytime the user register or login we generate a token
+token can be set as response header
+encapsulate payload logic in mongoose models (schema method)
+
+# middleware
+
+stored in the "middleware" folder
+
+either terminate the request response life cycle or pass to the next middleware function
+
+function auth(req, res, next) {
+if (a) return res.status(401).send("Error Mesaage")
+else next()
+}
+
+the authenticating middleware should not be public, so only available in certain modules, not index.js11
+
+# status
+
+200 successful
+400 bad request
+401 unauthorized # invalid json web token, can try again
+403 forbidden # valid json web token, but not authorized, dont try again
+404 not found

@@ -1,25 +1,17 @@
+const auth = require("../middleware/auth");
 const { User, validate } = require("../models/user");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-  const users = await User.find().sort("name");
-  const display = users.map((user) => ({
-    id: user._id,
-    name: user.name,
-    email: user.email,
-  }));
-  res.send(display);
+// get current user
+router.get("/me", auth, async (req, res) => {
+  const user = await User.findById(req.user._id).select("-password");
+  res.send(user);
 });
 
-router.get("/:id", async (req, res) => {
-  const user = await User.findById(req.params.id);
-  if (!user) res.status(404).send("The user with the given ID was not found.");
-  else res.send(_.pick(user, ["_id", "name", "email"]));
-});
-
+// registering a new user
 router.post("/", async (req, res) => {
   const result = validate(req.body);
   if (result.error)
@@ -31,11 +23,15 @@ router.post("/", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
-    res.send(_.pick(user, ["_id", "name", "email"]));
+
+    const token = user.generateAuthToken();
+    res
+      .header("x-auth-token", token) // seeting response headers
+      .send(_.pick(user, ["_id", "name", "email"])); // body of the response
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   // Validate
   // If invalid, return 400 - Bad request
   const { error } = validate(req.body);
@@ -60,7 +56,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   // find and delete
   const user = await User.findByIdAndDelete(req.params.id);
 
