@@ -1,3 +1,6 @@
+require("express-async-errors"); // catching exceptions for async function
+const winston = require("winston"); // logging package
+const error = require("./middleware/error");
 const config = require("config");
 const express = require("express");
 const genres = require("./routes/genres");
@@ -9,6 +12,8 @@ const auth = require("./routes/auth");
 const home = require("./routes/home");
 const mongoose = require("mongoose");
 const app = express();
+
+winston.add(new winston.transports.File({ filename: "logfile.log" }));
 
 if (!config.get("jwtPrivateKey")) {
   console.error("FATAL ERROR: jwtPrivateKey is not defined.");
@@ -28,6 +33,8 @@ app.use("/api/rentals", rentals);
 app.use("/api/users", users);
 app.use("/api/auth", auth);
 app.use("/", home);
+
+app.use(error); //error middleware is registered at last
 
 // PORT
 const port = process.env.PORT || 3000;
