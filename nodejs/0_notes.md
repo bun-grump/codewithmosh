@@ -1,4 +1,4 @@
-## NPM packages
+## NPM node package manager
 
 ### check node version
 
@@ -119,6 +119,8 @@ npm version patch
 npm publsih
 ```
 
+## Express API
+
 ### configuration
 
 ```bash
@@ -216,6 +218,8 @@ joi-objectid no longer works, use Joi.string().hex().length(24)
 utilities functions
 pick ### pick properties
 
+## authentication and authorization
+
 ### password validation
 
 joi-password-complexity
@@ -286,7 +290,7 @@ npm i express-async-errors
 this package works similarly as async middleware
 if it doesnt work, then we use the async middleware
 
-### logging
+### error logging
 
 #### winston package
 
@@ -309,3 +313,147 @@ logging levels
 - verbose
 - debug
 - silly
+
+### catching errors within express
+
+error middleware
+
+```js
+const winston = require("winston");
+
+// this only catches express request processing pipeline
+// if error is thrown outside of express, then it will not be caught here
+module.exports = function (err, req, res, next) {
+  // log the exception
+  winston.error(err.message, err);
+  res.status(500).send("something failed"); // internal server error
+};
+```
+
+then use it in index.js
+
+```js
+app.use(error);
+```
+
+### catching errors outside of express (syncronus)
+
+will need to use process and winston to catch and log errors outside of express
+
+```js
+// using process and winston to catch and log errors outside of express
+winston.handleExceptions(
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
+
+// throw and exception when there's a rejected promise so winston can catch it
+process.on("unhandledRejection", (ex) => {
+  throw ex;
+});
+```
+
+### extracting details into seprate modules
+
+create a folder "startup" and store all the modules there
+
+```js
+require("./startup/logging"); //load this first to log any error when loading the other modules
+require("./startup/routes")(app);
+require("./startup/db")();
+require("./startup/config");
+require("./startup/validation");
+```
+
+## automated testing
+
+- unit (test application without any external dependencies)
+- integration (test with external dependencies, files, databases and so on)
+- end-to-end (drives an application throught its UI, greatest amount of confident, but very slow, brittle)
+
+### takeaways
+
+- favour unit tests to e2e tests
+- cover unit test gaps with integration tests
+- use e2e tests sparingly
+
+### tool
+
+framework
+
+- jasmine (oldest)
+- mocha (plug in to use together: chai, sinon)
+- jest (wrapper around jasmine, preferred framework)
+
+## unit testing with jest
+
+```bash
+npm i jest --save-dev
+```
+
+in package.json file, add the following
+
+```json
+{
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
+```
+
+create a "test" folder to store all the test files
+the "test" folder should micmic the project folder structure
+
+- lib.test.js
+
+then run the test using cli
+
+```bash
+npm test
+```
+
+### for unit test, the number of test for a function is greater than execution path
+
+make sure the test is not too specifcic or too general
+can use regular expression to match certain patterns
+
+### need to use toEqual/toMatchObject when testing objects
+
+toEqual matches all the attributes
+toMatchObject only matches the overlapping attributes
+
+### automatically test running when files are changed
+
+```json
+{
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "scripts": {
+    "test": "jest --watchAll"
+  }
+}
+```
+
+### mock function
+
+when unit testing a function that depend on external database
+we can create a mock function to override the original function
+
+### jest mock function
+
+```js
+db.getCustomerSync = jest.fn().mockReturnValue({ email: "a" });
+mail.send = jest.fn();
+```
+
+using jest mock function, we can check whether the function is called
+we can also check the arguments that were passed to that function
+
+```js
+expect(mail.send).toHaveBeenCalled(); //asserting the mock function was called
+expect(mail.send.mock.calls[0][0]).toBe("a"); // asserting arguments passed to this function, first call first argument
+expect(mail.send.mock.calls[0][1]).toMatch(/order/); // first call second argument
+```
