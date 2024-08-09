@@ -4,21 +4,22 @@ require("express-async-errors"); // catching exceptions for async function
 
 module.exports = function () {
   // using process and winston to catch and log errors outside of express
-  winston.handleExceptions(
+  winston.exceptions.handle(
     new winston.transports.Console({ colorized: true, prettyPrint: true }),
     new winston.transports.File({ filename: "uncaughtExceptions.log" })
   );
 
-  // throw and exception when there's a rejected promise so winston can catch it
+  // throw and exception when there's a rejected promise so winston can catch it above
   process.on("unhandledRejection", (ex) => {
     throw ex;
   });
 
-  winston.add(new winston.transports.File({ filename: "logfile.log" })); //log to a file
   winston.add(
+    new winston.transports.Console({ colorized: true, prettyPrint: true }),
+    new winston.transports.File({ filename: "logfile.log" }), //log to a file
     new winston.transports.MongoDB({
       db: "mongodb://localhost/vidly",
       level: "error", //this level and above will be logged
     })
-  ); // log to mongodb
+  );
 };

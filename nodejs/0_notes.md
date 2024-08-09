@@ -432,10 +432,13 @@ toMatchObject only matches the overlapping attributes
     "jest": "^29.7.0"
   },
   "scripts": {
-    "test": "jest --watchAll"
+    "test": "jest --watchAll --verbose"
   }
 }
 ```
+
+the watchall flag will initiate run once any changes are saved
+the verbose flag will output more info
 
 ### mock function
 
@@ -456,4 +459,23 @@ we can also check the arguments that were passed to that function
 expect(mail.send).toHaveBeenCalled(); //asserting the mock function was called
 expect(mail.send.mock.calls[0][0]).toBe("a"); // asserting arguments passed to this function, first call first argument
 expect(mail.send.mock.calls[0][1]).toMatch(/order/); // first call second argument
+```
+
+## integration test
+
+### need to first set up test db
+
+in test.json, add the test db
+
+```json
+{
+  "jtwPrivateKey": "1234",
+  "db": "mongodb://localhost/vidly_tests"
+}
+```
+
+### install supertest for integration test
+
+```bash
+npm i supertest --save-dev
 ```
