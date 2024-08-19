@@ -29,7 +29,7 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", [auth, validateObjectId], async (req, res) => {
   // Validate
   // If invalid, return 400 - Bad request
   const { error } = validate(req.body);
@@ -50,7 +50,7 @@ router.put("/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/:id", [auth, admin], async (req, res) => {
+router.delete("/:id", [auth, admin, validateObjectId], async (req, res) => {
   // find and delete
   const genre = await Genre.findByIdAndDelete(req.params.id);
 

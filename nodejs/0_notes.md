@@ -479,3 +479,15 @@ in test.json, add the test db
 ```bash
 npm i supertest --save-dev
 ```
+
+### export the server object and load to our test file
+
+### add --coverage flag to check test coverage
+
+```json
+  "scripts": {
+    "test": "jest --watchAll --verbose --runInBand --coverage"
+  },
+```
+
+can open index.html in the coverage folder to see clearer
