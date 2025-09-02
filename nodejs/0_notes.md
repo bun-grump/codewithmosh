@@ -491,3 +491,9 @@ npm i supertest --save-dev
 ```
 
 can open index.html in the coverage folder to see clearer
+
+## test-driven developmen (TDD)
+
+- write a failing test
+- write the simplest code to make the test pass
+- refactor if necessary
